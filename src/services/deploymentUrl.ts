@@ -24,7 +24,7 @@ export const RELEASE_VERSION = '2.0.0';
 export const RELEASE_TAG = `v${RELEASE_VERSION}`;
 export const GITHUB_RELEASES_URL = `${GITHUB_REPO_URL}/releases`;
 export const GITHUB_LATEST_RELEASE_URL = `${GITHUB_REPO_URL}/releases/tag/${RELEASE_TAG}`;
-export const ANDROID_GOFILE_DOWNLOAD_URL = 'https://gofile.io/d/ChbZFtgH';
+export const ANDROID_GOFILE_DOWNLOAD_URL = 'https://gofile.io/d/RFwAnyWW';
 export const GITHUB_RELEASE_ASSETS = {
   portableZip: `${GITHUB_REPO_URL}/releases/download/${RELEASE_TAG}/KuroStream-Portable-${RELEASE_VERSION}-x64.zip`,
   setupPackageZip: `${GITHUB_REPO_URL}/releases/download/${RELEASE_TAG}/KuroStream-Windows-Setup-Package.zip`,
