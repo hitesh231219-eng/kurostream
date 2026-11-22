@@ -29,5 +29,6 @@ describe('GitHub Release v2.0.0 & Repository URLs', () => {
     expect(GITHUB_RELEASE_ASSETS.portableExe).toContain('KuroStream-Portable-2.0.0-x64.exe');
     expect(GITHUB_RELEASE_ASSETS.installerExe).toContain('KuroStream-Setup-2.0.0-x64.exe');
     expect(GITHUB_RELEASE_ASSETS.setupPackageZip).toContain('KuroStream-Windows-Setup-Package.zip');
+    expect(GITHUB_RELEASE_ASSETS.androidApk).toContain('KuroStream-Release-2.0.0.apk');
   });
 });

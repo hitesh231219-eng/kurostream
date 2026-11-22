@@ -83,16 +83,16 @@ def upload_file_to_gofile(file_path: str) -> str:
     if summary_path and os.path.exists(summary_path):
         try:
             with open(summary_path, "a") as f:
-                f.write(f"\n## 📱 Android APK Ready for Download\n\n")
+                f.write(f"\n## 📱 Android Release APK Ready for Download\n\n")
                 f.write(f"- **GoFile Direct Download**: [{download_url}]({download_url})\n")
                 f.write(f"- **File Name**: `{file_name}`\n")
                 f.write(f"- **File Size**: `{file_size_mb:.2f} MB`\n")
-                f.write(f"- **Platform**: Android 7.0+ (API 24 to 35)\n\n")
+                f.write(f"- **Platform**: Android 7.0+ (API 24 to 36 · Signed Release Build)\n\n")
         except Exception as e:
             print(f"Could not write step summary: {e}")
 
     return download_url
 
 if __name__ == "__main__":
-    target = sys.argv[1] if len(sys.argv) > 1 else "dist-android/KuroStream-Debug-2.0.0.apk"
+    target = sys.argv[1] if len(sys.argv) > 1 else "dist-android/KuroStream-Release-2.0.0.apk"
     upload_file_to_gofile(target)

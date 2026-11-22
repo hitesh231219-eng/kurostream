@@ -30,7 +30,7 @@ export const GITHUB_RELEASE_ASSETS = {
   setupPackageZip: `${GITHUB_REPO_URL}/releases/download/${RELEASE_TAG}/KuroStream-Windows-Setup-Package.zip`,
   portableExe: `${GITHUB_REPO_URL}/releases/download/${RELEASE_TAG}/KuroStream-Portable-${RELEASE_VERSION}-x64.exe`,
   installerExe: `${GITHUB_REPO_URL}/releases/download/${RELEASE_TAG}/KuroStream-Setup-${RELEASE_VERSION}-x64.exe`,
-  androidApk: `${GITHUB_REPO_URL}/releases/download/${RELEASE_TAG}/KuroStream-Debug-${RELEASE_VERSION}.apk`,
+  androidApk: `${GITHUB_REPO_URL}/releases/download/${RELEASE_TAG}/KuroStream-Release-${RELEASE_VERSION}.apk`,
   sourceArchive: `${GITHUB_REPO_URL}/archive/refs/tags/${RELEASE_TAG}.zip`,
 } as const;
 

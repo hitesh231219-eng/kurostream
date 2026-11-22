@@ -10,3 +10,7 @@ coverage/
 *.log
 .env*
 !.env.example
+*.jks
+*.keystore
+*.p12
+keystore.properties
