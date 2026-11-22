@@ -319,8 +319,9 @@ export const AZDirectoryView: React.FC<AZDirectoryViewProps> = ({
               <AnimeCard
                 key={anime.id}
                 anime={anime}
-                onSelectAnime={onSelectAnime}
+                onSelect={onSelectAnime}
                 onQuickPlay={onQuickPlay}
+                isGridItem={true}
               />
             ))}
           </div>
