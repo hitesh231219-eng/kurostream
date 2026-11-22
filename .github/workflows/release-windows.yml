@@ -1,0 +1,71 @@
+name: Build & Publish Windows Release (.EXE)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Existing or new GitHub Release tag to attach Windows binaries to'
+        required: true
+        default: 'v2.0.0'
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows x64 Electron Binaries
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Verify TypeScript & Vitest suites
+        run: npm run lint && npm test
+
+      - name: Build Vite frontend & embedded Electron server
+        run: npm run build && npm run build:electron-server
+
+      - name: Package Windows Portable & Setup (.EXE) with electron-builder
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: npx electron-builder --win portable nsis --x64 --config electron-builder.json --publish never
+
+      - name: Generate SHA-256 checksums for built executables
+        shell: pwsh
+        run: |
+          $tag = if ("${{ github.event_name }}" -eq "workflow_dispatch") { "${{ inputs.release_tag }}" } else { "${{ github.ref_name }}" }
+          Write-Output "RELEASE_TAG=$tag" >> $env:GITHUB_ENV
+          Get-ChildItem -Path dist-electron -Filter "*.exe" | ForEach-Object {
+            $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash.ToLower()
+            "$hash  $($_.Name)" | Out-File -FilePath dist-electron/SHA256SUMS-windows.txt -Append -Encoding utf8
+          }
+          Get-Content dist-electron/SHA256SUMS-windows.txt
+
+      - name: Ensure GitHub Release exists and upload Windows .EXE assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = $env:RELEASE_TAG
+          gh release view $tag 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $tag --title "KuroStream $tag" --notes "Automated Windows x64 Desktop Release for $tag"
+          }
+          $assets = Get-ChildItem -Path dist-electron -File | Where-Object { $_.Extension -eq ".exe" -or $_.Name -eq "SHA256SUMS-windows.txt" }
+          foreach ($file in $assets) {
+            Write-Host "Uploading $($file.FullName) to release $tag..."
+            gh release upload $tag $file.FullName --clobber
+          }

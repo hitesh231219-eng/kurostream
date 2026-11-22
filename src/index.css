@@ -1,0 +1,152 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --font-display: 'Outfit', sans-serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --kuro-bg: #08090d;
+    --kuro-surface: #12151f;
+    --kuro-surface-solid: #12151f;
+    --kuro-surface-alt: #191e2e;
+    --kuro-border: #1f2536;
+    --kuro-text: #f1f5f9;
+    --kuro-text-muted: #94a3b8;
+    --kuro-accent: #7c3aed;
+    --kuro-accent-rgb: 124, 58, 237;
+    --kuro-accent-hover: #8b5cf6;
+    --kuro-accent-text: #ffffff;
+    --kuro-accent-2: #10b981;
+
+    --kuro-radius: 12px;
+    --kuro-radius-sm: 8px;
+    --kuro-border-width: 1px;
+    --kuro-blur: 12px;
+    --kuro-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.35);
+    --kuro-container-max: 1280px;
+    --kuro-section-py: 24px;
+    --kuro-card-width: 192px;
+    --kuro-card-gap: 20px;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--kuro-bg);
+    color: var(--kuro-text);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+.app-drag-region {
+  -webkit-app-region: drag;
+}
+
+.app-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: var(--kuro-scrollbar-width, 8px);
+  height: var(--kuro-scrollbar-width, 8px);
+}
+::-webkit-scrollbar-track {
+  background: var(--kuro-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--kuro-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--kuro-accent);
+}
+
+/* Hide scrollbar for clean carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Customizable card geometry & hover modes */
+.kuro-surface-box {
+  background-color: var(--kuro-surface);
+  border-color: var(--kuro-border);
+  border-width: var(--kuro-border-width);
+  border-style: solid;
+  border-radius: var(--kuro-radius);
+  box-shadow: var(--kuro-shadow);
+  backdrop-filter: blur(var(--kuro-blur));
+}
+
+.kuro-card-frame {
+  background-color: var(--kuro-surface);
+  border: var(--kuro-border-width) solid var(--kuro-border);
+  border-radius: var(--kuro-radius);
+  box-shadow: var(--kuro-shadow);
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), border-color 180ms ease, box-shadow 200ms ease;
+}
+
+.group:hover .kuro-card-frame {
+  border-color: var(--kuro-accent);
+}
+
+.group:hover .kuro-hover-lift {
+  transform: translateY(-6px);
+}
+
+.group:hover .kuro-hover-glow {
+  box-shadow: 0 0 0 2px var(--kuro-accent), 0 14px 32px -6px rgba(var(--kuro-accent-rgb), 0.45);
+}
+
+.group:hover .kuro-hover-tilt {
+  transform: perspective(600px) rotateX(3deg) rotateY(-4deg) translateY(-3px);
+}
+
+.kuro-filter-vivid {
+  filter: saturate(1.3) contrast(1.06);
+}
+.kuro-filter-cinema {
+  filter: contrast(1.12) saturate(0.92) brightness(0.96);
+}
+.kuro-filter-noir {
+  filter: grayscale(1) contrast(1.15);
+}
+.kuro-filter-warm {
+  filter: sepia(0.24) saturate(1.12);
+}
+
+/* Responsive customizable anime grid (2-8 columns on desktop) */
+.kuro-anime-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--kuro-card-gap, 20px);
+}
+
+@media (min-width: 640px) {
+  .kuro-anime-grid {
+    grid-template-columns: repeat(min(var(--kuro-grid-cols, 6), 3), minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .kuro-anime-grid {
+    grid-template-columns: repeat(min(var(--kuro-grid-cols, 6), 4), minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .kuro-anime-grid {
+    grid-template-columns: repeat(var(--kuro-grid-cols, 6), minmax(0, 1fr));
+  }
+}

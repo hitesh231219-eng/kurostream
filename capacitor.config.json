@@ -1,0 +1,6 @@
+{
+  "appId": "com.kurostream.app",
+  "appName": "KuroStream",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

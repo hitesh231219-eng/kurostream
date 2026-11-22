@@ -1,0 +1,54 @@
+name: CI — Test, Lint & Build
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: Typecheck, Unit Tests & Production Builds
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run full verification suite (lint, tests, web build, Electron server bundle)
+        run: npm run verify
+
+      - name: Smoke-test production Express server startup
+        run: |
+          node - <<'EOF'
+          const { spawn } = require('node:child_process');
+          const c = spawn('npm', ['start'], {
+            env: { ...process.env, PORT: '3911' },
+            stdio: 'inherit'
+          });
+          setTimeout(async () => {
+            try {
+              const r = await fetch('http://127.0.0.1:3911/api/health');
+              const d = await r.json();
+              if (!r.ok || !d.ok) process.exit(1);
+              const p = await fetch('http://127.0.0.1:3911/');
+              if (!p.ok) process.exit(1);
+              console.log('Production server smoke test OK');
+              c.kill('SIGTERM');
+              process.exit(0);
+            } catch (e) {
+              console.error(e);
+              c.kill('SIGTERM');
+              process.exit(1);
+            }
+          }, 2500);
+          EOF

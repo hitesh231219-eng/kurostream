@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">KuroStream</string>
+    <string name="title_activity_main">KuroStream</string>
+    <string name="package_name">com.kurostream.app</string>
+    <string name="custom_url_scheme">com.kurostream.app</string>
+</resources>

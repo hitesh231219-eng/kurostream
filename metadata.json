@@ -1,0 +1,6 @@
+{
+  "name": "KuroStream - Modern Anime Streaming",
+  "description": "Stream anime with rich AniList GraphQL metadata, MegaPlay video integration, category filters, real-time search, and watchlist progress tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

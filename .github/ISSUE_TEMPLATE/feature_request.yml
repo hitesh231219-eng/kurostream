@@ -1,0 +1,17 @@
+name: Feature Request
+description: Propose a new UI Customizer preset, streaming provider, or Windows Desktop improvement.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: Describe the capability or improvement you would like added.
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Use Case & Benefit
+      description: Explain how this improves streaming, downloads, customization, or desktop usability.

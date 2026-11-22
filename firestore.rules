@@ -1,0 +1,314 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(uid) {
+      return isVerifiedUser() && request.auth.uid == uid;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidDateKey(dateKey) {
+      return dateKey is string && dateKey.size() == 10 && dateKey.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
+    function isValidServer(server) {
+      return server in ['anixo', 'animeembed', 'megaplay-mal', 'zokoanime'];
+    }
+
+    function isValidAudio(audio) {
+      return audio in ['sub', 'dub'];
+    }
+
+    function isValidWatchStatus(status) {
+      return status in ['watching', 'plan_to_watch', 'completed', 'on_hold', 'dropped'];
+    }
+
+    function isValidProfile(data, uid) {
+      return data.keys().hasAll([
+        'uid', 'name', 'email', 'emailVerified', 'avatar',
+        'preferredAudio', 'preferredServer', 'xp', 'episodesWatched',
+        'mangaChaptersRead', 'completedAnime', 'watchMinutes',
+        'createdAt', 'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'uid', 'name', 'email', 'emailVerified', 'avatar',
+        'bio', 'favoriteAnime', 'preferredAudio', 'preferredServer',
+        'activeCharacterId', 'xp', 'episodesWatched', 'mangaChaptersRead',
+        'completedAnime', 'watchMinutes', 'createdAt', 'updatedAt'
+      ])
+      && data.uid is string && data.uid == uid && isValidId(data.uid)
+      && data.name is string && data.name.size() >= 1 && data.name.size() <= 64
+      && data.email is string && data.email.size() >= 3 && data.email.size() <= 160
+      && data.emailVerified is bool && data.emailVerified == true
+      && data.avatar is string && data.avatar.size() >= 1 && data.avatar.size() <= 512
+      && (!('bio' in data) || (data.bio is string && data.bio.size() <= 280))
+      && (!('favoriteAnime' in data) || (data.favoriteAnime is string && data.favoriteAnime.size() <= 120))
+      && isValidAudio(data.preferredAudio)
+      && isValidServer(data.preferredServer)
+      && (!('activeCharacterId' in data) || (data.activeCharacterId is string && data.activeCharacterId.size() <= 64))
+      && data.xp is int && data.xp >= 0 && data.xp <= 10000000
+      && data.episodesWatched is int && data.episodesWatched >= 0 && data.episodesWatched <= 1000000
+      && data.mangaChaptersRead is int && data.mangaChaptersRead >= 0 && data.mangaChaptersRead <= 1000000
+      && data.completedAnime is int && data.completedAnime >= 0 && data.completedAnime <= 100000
+      && data.watchMinutes is int && data.watchMinutes >= 0 && data.watchMinutes <= 100000000
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    function isValidWatchlistItem(data, uid) {
+      return data.keys().hasAll([
+        'uid', 'animeId', 'title', 'status', 'currentEpisode',
+        'currentTimeSec', 'durationSec', 'isFavorite', 'createdAt', 'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'uid', 'animeId', 'malId', 'title', 'coverImage', 'bannerImage',
+        'format', 'totalEpisodes', 'episodesUnknown', 'status',
+        'currentEpisode', 'currentTimeSec', 'durationSec', 'isFavorite',
+        'createdAt', 'updatedAt'
+      ])
+      && data.uid is string && data.uid == uid && isValidId(data.uid)
+      && data.animeId is int && data.animeId > 0
+      && (!('malId' in data) || (data.malId is int && data.malId > 0))
+      && data.title is string && data.title.size() >= 1 && data.title.size() <= 240
+      && (!('coverImage' in data) || (data.coverImage is string && data.coverImage.size() <= 512))
+      && (!('bannerImage' in data) || (data.bannerImage is string && data.bannerImage.size() <= 512))
+      && (!('format' in data) || (data.format is string && data.format.size() <= 32))
+      && (!('totalEpisodes' in data) || (data.totalEpisodes is int && data.totalEpisodes >= 0 && data.totalEpisodes <= 10000))
+      && (!('episodesUnknown' in data) || data.episodesUnknown is bool)
+      && isValidWatchStatus(data.status)
+      && data.currentEpisode is int && data.currentEpisode >= 0 && data.currentEpisode <= 10000
+      && data.currentTimeSec is number && data.currentTimeSec >= 0 && data.currentTimeSec <= 86400
+      && data.durationSec is number && data.durationSec >= 0 && data.durationSec <= 86400
+      && data.isFavorite is bool
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    function isValidDailyQuestRecord(data, uid, dateKey) {
+      return data.keys().hasAll([
+        'uid', 'dateKey', 'watchCount', 'mangaCount', 'partyCount',
+        'socialCount', 'claimedIds', 'createdAt', 'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'uid', 'dateKey', 'watchCount', 'mangaCount', 'partyCount',
+        'socialCount', 'claimedIds', 'createdAt', 'updatedAt'
+      ])
+      && data.uid is string && data.uid == uid && isValidId(data.uid)
+      && isValidDateKey(data.dateKey) && data.dateKey == dateKey
+      && data.watchCount is int && data.watchCount >= 0 && data.watchCount <= 100
+      && data.mangaCount is int && data.mangaCount >= 0 && data.mangaCount <= 100
+      && data.partyCount is int && data.partyCount >= 0 && data.partyCount <= 100
+      && data.socialCount is int && data.socialCount >= 0 && data.socialCount <= 100
+      && data.claimedIds is list && data.claimedIds.size() <= 10
+      && (data.claimedIds.size() == 0 || data.claimedIds[0] is string)
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    function isValidMangaProgressRecord(data, uid) {
+      return data.keys().hasAll([
+        'uid', 'mangaId', 'title', 'lastChapterId', 'lastChapterNumber',
+        'lastPage', 'createdAt', 'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'uid', 'mangaId', 'title', 'lastChapterId', 'lastChapterNumber',
+        'lastPage', 'createdAt', 'updatedAt'
+      ])
+      && data.uid is string && data.uid == uid && isValidId(data.uid)
+      && data.mangaId is int && data.mangaId > 0
+      && data.title is string && data.title.size() >= 1 && data.title.size() <= 240
+      && data.lastChapterId is string && data.lastChapterId.size() <= 128
+      && data.lastChapterNumber is string && data.lastChapterNumber.size() <= 32
+      && data.lastPage is int && data.lastPage >= 1 && data.lastPage <= 1000
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    function isValidWatchRoom(data, roomId) {
+      return data.keys().hasAll([
+        'roomId', 'roomName', 'hostUid', 'hostName', 'animeId',
+        'animeTitle', 'episode', 'server', 'audio', 'isPlaying',
+        'playbackPositionSec', 'expiresAtMs', 'createdAt', 'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'roomId', 'roomName', 'hostUid', 'hostName', 'animeId',
+        'animeTitle', 'malId', 'episode', 'server', 'audio', 'isPlaying',
+        'playbackPositionSec', 'expiresAtMs', 'createdAt', 'updatedAt'
+      ])
+      && data.roomId is string && data.roomId == roomId && isValidId(data.roomId)
+      && data.roomName is string && data.roomName.size() >= 1 && data.roomName.size() <= 120
+      && data.hostUid is string && isValidId(data.hostUid)
+      && data.hostName is string && data.hostName.size() >= 1 && data.hostName.size() <= 64
+      && data.animeId is int && data.animeId > 0
+      && data.animeTitle is string && data.animeTitle.size() >= 1 && data.animeTitle.size() <= 240
+      && (!('malId' in data) || (data.malId is int && data.malId > 0))
+      && data.episode is int && data.episode >= 1 && data.episode <= 5000
+      && isValidServer(data.server)
+      && isValidAudio(data.audio)
+      && data.isPlaying is bool
+      && data.playbackPositionSec is number && data.playbackPositionSec >= 0 && data.playbackPositionSec <= 86400
+      && data.expiresAtMs is int && data.expiresAtMs > 0
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    // 1. User Private Profile (strict PII isolation + XP anti-tamper bound)
+    match /users/{uid}/private/profile {
+      allow get: if isValidId(uid) && isOwner(uid);
+      allow create: if isValidId(uid)
+        && isOwner(uid)
+        && isValidProfile(incoming(), uid)
+        && incoming().xp == 0
+        && incoming().episodesWatched == 0
+        && incoming().mangaChaptersRead == 0
+        && incoming().completedAnime == 0
+        && incoming().watchMinutes == 0
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(uid)
+        && isOwner(uid)
+        && isValidProfile(incoming(), uid)
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          // Action: Update Preferences / Persona
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'name', 'avatar', 'bio', 'favoriteAnime', 'preferredAudio',
+            'preferredServer', 'activeCharacterId', 'updatedAt'
+          ])
+          ||
+          // Action: Verified Activity XP Increment (capped at +200 XP per update)
+          (
+            incoming().diff(existing()).affectedKeys().hasOnly([
+              'xp', 'episodesWatched', 'mangaChaptersRead', 'completedAnime',
+              'watchMinutes', 'updatedAt'
+            ])
+            && incoming().xp >= existing().xp
+            && (incoming().xp - existing().xp) <= 200
+            && incoming().episodesWatched >= existing().episodesWatched
+            && (incoming().episodesWatched - existing().episodesWatched) <= 1
+            && incoming().mangaChaptersRead >= existing().mangaChaptersRead
+            && (incoming().mangaChaptersRead - existing().mangaChaptersRead) <= 1
+          )
+        );
+      allow delete: if false;
+    }
+
+    // 2. User Watchlist & Watch History (isolated by UID)
+    match /users/{uid}/watchlist/{animeId} {
+      allow get: if isValidId(uid) && isValidId(animeId) && isOwner(uid);
+      allow list: if isValidId(uid) && isOwner(uid) && resource.data.uid == request.auth.uid;
+      allow create: if isValidId(uid) && isValidId(animeId)
+        && isOwner(uid)
+        && isValidWatchlistItem(incoming(), uid)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(uid) && isValidId(animeId)
+        && isOwner(uid)
+        && isValidWatchlistItem(incoming(), uid)
+        && incoming().uid == existing().uid
+        && incoming().animeId == existing().animeId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'malId', 'title', 'coverImage', 'bannerImage', 'format',
+          'totalEpisodes', 'episodesUnknown', 'status', 'currentEpisode',
+          'currentTimeSec', 'durationSec', 'isFavorite', 'updatedAt'
+        ]);
+      allow delete: if isValidId(uid) && isValidId(animeId) && isOwner(uid);
+    }
+
+    // 3. Date-Scoped Daily Quests (isolated by UID)
+    match /users/{uid}/dailyQuests/{dateKey} {
+      allow get: if isValidId(uid) && isValidDateKey(dateKey) && isOwner(uid);
+      allow create: if isValidId(uid) && isValidDateKey(dateKey)
+        && isOwner(uid)
+        && isValidDailyQuestRecord(incoming(), uid, dateKey)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(uid) && isValidDateKey(dateKey)
+        && isOwner(uid)
+        && isValidDailyQuestRecord(incoming(), uid, dateKey)
+        && incoming().uid == existing().uid
+        && incoming().dateKey == existing().dateKey
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'watchCount', 'mangaCount', 'partyCount', 'socialCount', 'claimedIds', 'updatedAt'
+        ]);
+      allow delete: if false;
+    }
+
+    // 4. User Manga Reading Progress (isolated by UID)
+    match /users/{uid}/mangaProgress/{mangaId} {
+      allow get: if isValidId(uid) && isValidId(mangaId) && isOwner(uid);
+      allow list: if isValidId(uid) && isOwner(uid) && resource.data.uid == request.auth.uid;
+      allow create: if isValidId(uid) && isValidId(mangaId)
+        && isOwner(uid)
+        && isValidMangaProgressRecord(incoming(), uid)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(uid) && isValidId(mangaId)
+        && isOwner(uid)
+        && isValidMangaProgressRecord(incoming(), uid)
+        && incoming().uid == existing().uid
+        && incoming().mangaId == existing().mangaId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'lastChapterId', 'lastChapterNumber', 'lastPage', 'updatedAt'
+        ]);
+      allow delete: if isValidId(uid) && isValidId(mangaId) && isOwner(uid);
+    }
+
+    // 5. Watch Party Rooms (host-authoritative updates, no blanket collection list)
+    match /watchRooms/{roomId} {
+      allow get: if isValidId(roomId) && isVerifiedUser();
+      allow list: if false;
+      allow create: if isValidId(roomId)
+        && isVerifiedUser()
+        && isValidWatchRoom(incoming(), roomId)
+        && incoming().hostUid == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(roomId)
+        && isVerifiedUser()
+        && isValidWatchRoom(incoming(), roomId)
+        && existing().hostUid == request.auth.uid
+        && incoming().roomId == existing().roomId
+        && incoming().hostUid == existing().hostUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'roomName', 'animeId', 'animeTitle', 'malId', 'episode',
+          'server', 'audio', 'isPlaying', 'playbackPositionSec',
+          'expiresAtMs', 'updatedAt'
+        ]);
+      allow delete: if isValidId(roomId) && isVerifiedUser() && existing().hostUid == request.auth.uid;
+    }
+  }
+}
