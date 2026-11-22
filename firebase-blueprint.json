@@ -1,0 +1,382 @@
+{
+  "entities": {
+    "UserPrivateProfile": {
+      "title": "UserPrivateProfile",
+      "description": "Authenticated user profile, statistics, preferences, and active character persona.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 160
+        },
+        "emailVerified": {
+          "type": "boolean"
+        },
+        "avatar": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "bio": {
+          "type": "string",
+          "maxLength": 280
+        },
+        "favoriteAnime": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "preferredAudio": {
+          "type": "string",
+          "enum": ["sub", "dub"]
+        },
+        "preferredServer": {
+          "type": "string",
+          "enum": ["anixo", "animeembed", "megaplay-mal", "zokoanime"]
+        },
+        "activeCharacterId": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "xp": {
+          "type": "integer"
+        },
+        "episodesWatched": {
+          "type": "integer"
+        },
+        "mangaChaptersRead": {
+          "type": "integer"
+        },
+        "completedAnime": {
+          "type": "integer"
+        },
+        "watchMinutes": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "uid",
+        "name",
+        "email",
+        "emailVerified",
+        "avatar",
+        "preferredAudio",
+        "preferredServer",
+        "xp",
+        "episodesWatched",
+        "mangaChaptersRead",
+        "completedAnime",
+        "watchMinutes",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "WatchlistItem": {
+      "title": "WatchlistItem",
+      "description": "User isolated anime watchlist and episode playback timestamp entry.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "animeId": {
+          "type": "integer"
+        },
+        "malId": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "coverImage": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "bannerImage": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "format": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "totalEpisodes": {
+          "type": "integer"
+        },
+        "episodesUnknown": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["watching", "plan_to_watch", "completed", "on_hold", "dropped"]
+        },
+        "currentEpisode": {
+          "type": "integer"
+        },
+        "currentTimeSec": {
+          "type": "number"
+        },
+        "durationSec": {
+          "type": "number"
+        },
+        "isFavorite": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "uid",
+        "animeId",
+        "title",
+        "status",
+        "currentEpisode",
+        "currentTimeSec",
+        "durationSec",
+        "isFavorite",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "DailyQuestRecord": {
+      "title": "DailyQuestRecord",
+      "description": "Date-keyed daily quest progression for a single user.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "dateKey": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "watchCount": {
+          "type": "integer"
+        },
+        "mangaCount": {
+          "type": "integer"
+        },
+        "partyCount": {
+          "type": "integer"
+        },
+        "socialCount": {
+          "type": "integer"
+        },
+        "claimedIds": {
+          "type": "array"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "uid",
+        "dateKey",
+        "watchCount",
+        "mangaCount",
+        "partyCount",
+        "socialCount",
+        "claimedIds",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "MangaProgressRecord": {
+      "title": "MangaProgressRecord",
+      "description": "User-isolated manga chapter reading progress.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "mangaId": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "lastChapterId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "lastChapterNumber": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "lastPage": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "uid",
+        "mangaId",
+        "title",
+        "lastChapterId",
+        "lastChapterNumber",
+        "lastPage",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "WatchRoom": {
+      "title": "WatchRoom",
+      "description": "Shared Watch Party room metadata and host-authoritative playback state.",
+      "type": "object",
+      "properties": {
+        "roomId": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 32,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "roomName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "hostUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "hostName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "animeId": {
+          "type": "integer"
+        },
+        "animeTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 240
+        },
+        "malId": {
+          "type": "integer"
+        },
+        "episode": {
+          "type": "integer"
+        },
+        "server": {
+          "type": "string",
+          "enum": ["anixo", "animeembed", "megaplay-mal", "zokoanime"]
+        },
+        "audio": {
+          "type": "string",
+          "enum": ["sub", "dub"]
+        },
+        "isPlaying": {
+          "type": "boolean"
+        },
+        "playbackPositionSec": {
+          "type": "number"
+        },
+        "expiresAtMs": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "roomId",
+        "roomName",
+        "hostUid",
+        "hostName",
+        "animeId",
+        "animeTitle",
+        "episode",
+        "server",
+        "audio",
+        "isPlaying",
+        "playbackPositionSec",
+        "expiresAtMs",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{uid}/private/profile": {
+      "schema": { "$ref": "#/entities/UserPrivateProfile" },
+      "description": "Private user account profile, stats, and preferences isolated by Firebase UID."
+    },
+    "/users/{uid}/watchlist/{animeId}": {
+      "schema": { "$ref": "#/entities/WatchlistItem" },
+      "description": "User-isolated watchlist and episode/second playback timestamps."
+    },
+    "/users/{uid}/dailyQuests/{dateKey}": {
+      "schema": { "$ref": "#/entities/DailyQuestRecord" },
+      "description": "UTC date-scoped daily quest progress for a single user."
+    },
+    "/users/{uid}/mangaProgress/{mangaId}": {
+      "schema": { "$ref": "#/entities/MangaProgressRecord" },
+      "description": "User-isolated manga chapter reading progress."
+    },
+    "/watchRooms/{roomId}": {
+      "schema": { "$ref": "#/entities/WatchRoom" },
+      "description": "Synchronized watch party rooms with host-enforced mutation rules."
+    }
+  }
+}

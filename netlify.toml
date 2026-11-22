@@ -1,0 +1,64 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+[[redirects]]
+  from = "/api/servers/health"
+  to = "/.netlify/functions/servers-health"
+  status = 200
+
+[[redirects]]
+  from = "/api/anilist"
+  to = "/.netlify/functions/anilist"
+  status = 200
+
+[[redirects]]
+  from = "/api/compliance/status"
+  to = "/.netlify/functions/compliance-status"
+  status = 200
+
+[[redirects]]
+  from = "/api/dmca/notice"
+  to = "/.netlify/functions/dmca-notice"
+  status = 200
+
+[[redirects]]
+  from = "/api/manga-proxy"
+  to = "/.netlify/functions/manga-proxy"
+  status = 200
+
+[[redirects]]
+  from = "/api/manga/chapters"
+  to = "/.netlify/functions/manga-chapters"
+  status = 200
+
+[[redirects]]
+  from = "/api/manga/chapter-pages"
+  to = "/.netlify/functions/manga-chapter-pages"
+  status = 200
+
+[[redirects]]
+  from = "/api/downloads/search"
+  to = "/.netlify/functions/downloads-search"
+  status = 200
+
+[[redirects]]
+  from = "/api/downloads/resolve"
+  to = "/.netlify/functions/downloads-resolve"
+  status = 200
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

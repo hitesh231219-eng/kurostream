@@ -1,0 +1,6 @@
+{
+  "summary":  "Implementation plan for upgrading the KuroStream GitHub repository, adding automated CI/CD & Windows .exe build workflows, publishing the v2.0.0 Stable GitHub Release with downloadable Windows packages, and connecting the in-app Desktop Setup Wizard to live release assets.",
+  "updatedAt":  "2026-11-21T10:18:50.308373436Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

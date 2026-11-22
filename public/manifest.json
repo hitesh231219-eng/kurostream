@@ -1,0 +1,21 @@
+{
+  "name": "KuroStream",
+  "short_name": "KuroStream",
+  "description": "Full-stack anime streaming, manga reader, watch parties, and customizer app.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0d14",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/kurostream.ico",
+      "sizes": "48x48 64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

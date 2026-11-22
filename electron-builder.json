@@ -1,0 +1,50 @@
+{
+  "appId": "com.kurostream.app",
+  "productName": "KuroStream",
+  "copyright": "Copyright © 2026 KuroStream Community",
+  "npmRebuild": false,
+  "compression": "normal",
+  "directories": {
+    "output": "dist-electron"
+  },
+  "files": [
+    "dist/**/*",
+    "electron/**/*",
+    "package.json",
+    "!node_modules/**/*",
+    "!public/*.zip",
+    "!dist/*.zip"
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      },
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "electron/icon.ico",
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "requestedExecutionLevel": "asInvoker",
+    "signAndEditExecutable": true
+  },
+  "nsis": {
+    "artifactName": "${productName}-Setup-${version}-${arch}.${ext}",
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "allowElevation": false,
+    "createDesktopShortcut": "always",
+    "createStartMenuShortcut": true,
+    "shortcutName": "KuroStream",
+    "installerIcon": "electron/icon.ico",
+    "uninstallerIcon": "electron/icon.ico",
+    "deleteAppDataOnUninstall": false,
+    "runAfterFinish": true
+  },
+  "portable": {
+    "artifactName": "${productName}-Portable-${version}-${arch}.${ext}"
+  }
+}

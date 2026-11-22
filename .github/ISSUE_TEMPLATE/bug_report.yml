@@ -1,0 +1,42 @@
+name: Bug Report
+description: Report a broken stream source, download resolver bug, UI customizer issue, or Windows Desktop error.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for helping keep KuroStream reliable! Please fill out the details below.
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform / Mirror
+      options:
+        - Windows Desktop App (.exe / .zip)
+        - Web (kurostream-app.netlify.app)
+        - Vercel Mirror (kurostream-m1.vercel.app)
+        - GitHub Pages (Static)
+        - Self-Hosted Localhost
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App Version
+      placeholder: "e.g. v2.0.0"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Clear description of the bug and expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Click ...
+        3. Observe error

@@ -1,0 +1,12 @@
+node_modules/
+build/
+dist/
+dist-electron/
+electron/embedded-server.cjs
+coverage/
+.vercel/
+.netlify/
+.DS_Store
+*.log
+.env*
+!.env.example
